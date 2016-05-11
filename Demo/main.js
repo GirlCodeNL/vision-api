@@ -11,14 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-// Expecting this line in file named key.js
+// UNCOMMENT FOLLOWING LINE AND INSERT API KEY
 var apiKey = "[YOUR API KEY HERE]";
 var CV_URL = "https://vision.googleapis.com/v1/images:annotate?key=" + apiKey;
-
-$(document).ready(function() {
-  $('#fileform').on('submit', uploadFiles);
-});
 
 /**
  * 'submit' event handler - reads the image bytes and sends it to the Cloud

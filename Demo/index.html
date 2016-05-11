@@ -16,11 +16,10 @@
   <meta charset="UTF-8">
   <title>Cloud Vision Demo</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-  <script type="text/javascript" src="key.js"></script>
   <script type="text/javascript" src="main.js"></script>
 </head>
 <body>
-  <form id="fileform" action="">
+  <form id="fileform" name="uploadForm" action="" onsubmit="uploadFiles(event)">
     <select name="type">
       <option value="LANDMARK_DETECTION">LANDMARK_DETECTION</option>
       <option value="TYPE_UNSPECIFIED">TYPE_UNSPECIFIED</option>
@@ -32,7 +31,7 @@
       <option value="IMAGE_PROPERTIES">IMAGE_PROPERTIES</option>
     </select><br />
     <input type="file" name="fileField"><br /><br />
-    <input type="submit" name="submit" value="Submit">
+    <input type="submit" name="submit" value="Submit" >
   </form>
 
   <code style="white-space:pre" id="results"></code>
