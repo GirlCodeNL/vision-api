@@ -12,7 +12,7 @@
 // limitations under the License.
 
 // INSERT API KEY
-var apiKey = "[YOUR API KEY]";
+var apiKey = "AIzaSyDbyarhNgV0VlMWvQbJZlhJ8mQhR_APoEA";
 var CV_URL = "https://vision.googleapis.com/v1/images:annotate?key=" + apiKey;
 
 /**
@@ -33,8 +33,7 @@ function uploadFiles(event) {
  */
 function processFile(event) {
   var content = event.target.result;
-  sendFileToCloudVision(
-      content.replace("data:image/jpeg;base64,", ""));
+  sendFileToCloudVision(content.replace("data:image/jpeg;base64,", ""));
 }
 
 /**
@@ -63,16 +62,17 @@ function sendFileToCloudVision(content) {
   var request = new XMLHttpRequest();
   request.open('POST', CV_URL, true);
   request.setRequestHeader('Content-Type', 'application/json');
-  request.onerror = function(errorThrown) {
-    // There was a connection error of some sort
-    setResult('ERRORS: ' + errorThrown);
-  };
   request.send(
     JSON.stringify(data)
   );
 
   request.onload = function() {
     setResult(request.responseText);
+  };
+
+  request.onerror = function(errorThrown) {
+    // There was a connection error of some sort
+    setResult('ERRORS: ', errorThrown);
   };
 }
 
