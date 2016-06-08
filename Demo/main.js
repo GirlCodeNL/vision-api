@@ -11,8 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// UNCOMMENT FOLLOWING LINE AND INSERT API KEY
-var apiKey = "[YOUR API KEY HERE]";
+// INSERT API KEY
+var apiKey = "AIzaSyDbyarhNgV0VlMWvQbJZlhJ8mQhR_APoEA";
 var CV_URL = "https://vision.googleapis.com/v1/images:annotate?key=" + apiKey;
 
 /**
@@ -21,12 +21,11 @@ var CV_URL = "https://vision.googleapis.com/v1/images:annotate?key=" + apiKey;
  */
 function uploadFiles(event) {
   event.preventDefault(); // Prevent the default form post
-
-  // Grab the file and asynchronously convert to base64.
-  var file = $('#fileform [name=fileField]')[0].files[0];
-  var reader = new FileReader();
-  reader.onloadend = processFile;
-  reader.readAsDataURL(file);
+  var form = document.querySelector('form'); //get the form data from html
+  var file = new FormData(form).get('fileField'); // get the picture that should be uploaded
+  var reader = new FileReader(); // create a Reader that can read the chosen picture
+  reader.onloadend = processFile; // add a function to the Reader that should be executed after the file is loaded
+  reader.readAsDataURL(file); // read the file
 }
 
 /**
@@ -34,8 +33,7 @@ function uploadFiles(event) {
  */
 function processFile(event) {
   var content = event.target.result;
-  sendFileToCloudVision(
-      content.replace("data:image/jpeg;base64,", ""));
+  sendFileToCloudVision(content.replace("data:image/jpeg;base64,", ""));
 }
 
 /**
@@ -43,10 +41,11 @@ function processFile(event) {
  * results.
  */
 function sendFileToCloudVision(content) {
-  var type = $("#fileform [name=type]").val();
+  var form = document.querySelector('form'); //get the form data from html
+  var type = new FormData(form).get('type'); // get the type that should be used for tagging
 
   // Strip out the file prefix when you convert to json.
-  var request = {
+  var data = {
     requests: [{
       image: {
         content: content
@@ -58,20 +57,26 @@ function sendFileToCloudVision(content) {
     }]
   };
 
-  $('#results').text('Loading...');
-  $.post({
-    url: CV_URL,
-    data: JSON.stringify(request),
-    contentType: 'application/json'
-  }).fail(function(jqXHR, textStatus, errorThrown) {
-    $('#results').text('ERRORS: ' + textStatus + ' ' + errorThrown);
-  }).done(displayJSON);
+  setResult('Loading...');
+
+  var request = new XMLHttpRequest();
+  request.open('POST', CV_URL, true);
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.send(
+    JSON.stringify(data)
+  );
+
+  request.onload = function() {
+    setResult(request.responseText);
+  };
+
+  request.onerror = function(errorThrown) {
+    // There was a connection error of some sort
+    setResult('ERRORS: ', errorThrown);
+  };
 }
 
-/**
- * Displays the results.
- */
-function displayJSON(data) {
-  var contents = JSON.stringify(data, null, 4);
-  $("#results").text(contents);
+function setResult(result) {
+  var resultTag = document.getElementById('results');
+  resultTag.innerHTML = result;
 }
